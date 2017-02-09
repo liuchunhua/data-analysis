@@ -28,19 +28,18 @@
 
 (defn tab-list
   [coll]
-  (let [first-tab (first coll)
+  (let [{:keys [id tab tab-content]} (first coll)
         tabs (next coll)]
     [:div
      [:ul {:class "nav nav-tabs" :role "tablist"}
-      [:li {:class "active" :role "presentation"} [:a {:href (str "#" (first-tab :id)) :role "tab" :data-toggle "tab" :aria-controls (first-tab :id)} (first-tab :tab)]]
+      [:li {:class "active" :role "presentation"} [:a {:href (str "#" id) :role "tab" :data-toggle "tab" :aria-controls id} tab]]
       (for [{:keys [id tab]} tabs]
-        ^{:key id} [:li {:class "" :role "presentation"} [:a {:href (str "#" id) :role "tab" :data-toggle "tab" :aria-controls "station"} tab]])
+        ^{:key id} [:li {:role "presentation"} [:a {:href (str "#" id) :role "tab" :data-toggle "tab" :aria-controls id} tab]])
       ]
      [:div.tab-content {:style {:padding "4px"}}
-      [:div {:id (first-tab :id) :role "tabpanel" :class "tab-panel fade in active" :aria-labelledby "route-tab"}
-       (first-tab :tab-content)]
+      [:div {:id id :role "tabpanel" :class "tab-pane fade in active" :aria-labelledby (str id "-tab")} tab-content]
       (for [{:keys [id tab-content]} tabs]
-        ^{:key id}[:div#station {:role "tabpanel" :class "tab-panel fade" :aria-labelledby "station-tab"}
+        ^{:key id}[:div#station {:role "tabpanel" :class "tab-pane fade" :aria-labelledby (str id "-tab")}
                    tab-content])]]))
 (defn table
   [{:keys [columns rows on-click on-dbclick]}]

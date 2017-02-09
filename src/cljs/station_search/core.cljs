@@ -81,6 +81,14 @@
                             [:p "距离：" distance "米"]]}]
     [ui/title-panel {:title "路径信息" :class "panel-danger" :body [:p ""]}]))
 
+(defn gaode-station-form
+  []
+  (ui/form-horizontal
+    {:id "gaode-search-form" :action "#" :elements
+    [[ui/input-element {:id "gaode-pcode" :name "pcode" :type "text" :placeholder "省份编码" :label "省份"}]
+     [ui/input-element {:id "gaode-station" :name "station" :type "text" :placeholder "收费站" :label "收费站"}]
+     [ui/input-element {:id "gaode-attr" :name "attr" :type "text" :placeholder "属性" :label "属性"}]]}))
+
 (defn main-frame
   []
   [:div.container-fluid
@@ -95,7 +103,7 @@
                                                            [station-form]
                                                            [in-out-station (@state :route)]
                                                            ]}
-                    {:id "station" :tab "高德"}]]]
+                    {:id "station" :tab "高德" :tab-content [gaode-station-form]}]]]
      [:div.col-lg-9
       [ui/title-panel {:title [ui/button-element {:id "btn-map-clear" :type "button" :value "地图清空"  :class "btn-info btn-xs"}]
                        :class "panel-success"
@@ -123,4 +131,3 @@
 (defn render
   []
   (r/render-component [main-frame] (by-id "app")))
-
