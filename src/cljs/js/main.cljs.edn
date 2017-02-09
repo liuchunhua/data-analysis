@@ -1,0 +1,4 @@
+{:require [modern-cljs.core gaode-map.core]
+ :compiler-options {:asset-path "js/main.out"
+                    :parallel-build true
+                    }}
