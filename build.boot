@@ -14,7 +14,7 @@
                  [org.clojure/tools.nrepl "0.2.12" :scope "test"]
                  [reagent "0.6.0"]
                  [cljs-ajax "0.5.8"]
-                 [domina "1.0.3"]
+                 [org.clojars.magomimmo/domina "2.0.0-SNAPSHOT"]
                  [com.sdhs.etc.analysis/analysis-restful-service "0.0.1"]
                  ]
  :mirrors ["central" {:name "uk" :url "http://uk.maven.org/maven2/"}])

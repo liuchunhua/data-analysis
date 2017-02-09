@@ -1,25 +1,27 @@
 (ns bootstrap.ui
-  (:require [clojure.string :refer [join]]))
+  (:require [clojure.string :refer [join]]
+            [goog.dom :as dom]
+            [goog.dom.classlist :as classes]))
 
 (defn input-element
-  [id name type placeholder label]
+  [{:keys [id name type placeholder label]}]
   [:div.form-group {:id (str "input-" id)}
    [:label {:for id :class "col-sm-2 control-label"} label]
    [:div.col-sm-10 [:input.form-control {:id id :name name :type type :placeholder placeholder :required ""}]]])
 
 (defn button-element
-  [type value click-fn]
-  [:button.btn.btn-default {:type type :on-click click-fn} value])
+  [{:keys [id type value on-click class]}]
+  [:button.btn.btn-default {:id id :type type :class class :on-click on-click} value])
 
 (defn form-horizontal
-  [id action element-coll]
+  [{:keys [id action elements]}]
   [:form.form-horizontal {:id id :action action :style {:padding "4px"}}
-   (for [[element i] (zipmap element-coll (range))]
+   (for [[element i] (zipmap elements (range))]
      ^{:key i} [:div element])])
 
 (defn title-panel
-  [^string title cls body]
-  [:div.panel {:class cls}
+  [{:keys [title class body]}]
+  [:div.panel {:class class}
    [:div.panel-heading title]
    [:div.panel-body
     body]])
@@ -42,14 +44,14 @@
                    tab-content])]]))
 (defn table
   [{:keys [columns rows on-click on-dbclick]}]
-  [:table {:class "table table-bordered .table-hover"}
+  [:table {:class "table table-hover"}
    [:thead
     [:tr
      (for [[i column] (zipmap (range) columns)]
        ^{:key i} [:th column])]]
    [:tbody
     (for [[i row] (zipmap (range) rows)]
-      ^{:key i} [:tr {:on-double-click (fn [e] (if on-dbclick (on-dbclick i))) :on-click (fn [e] (when on-click (on-click e)))}
+      ^{:key i} [:tr {:on-double-click (fn [e] (when on-dbclick (do (on-dbclick i) (classes/add (dom/getParentElement (.-target e)) "success") nil))) :on-click (fn [e] (when on-click (on-click e)))}
                  (for [[index cell] (zipmap (range) row)]
                    ^{:key index} [:td (cond (array? cell) (join "," cell)
                                             :else cell)])])]])

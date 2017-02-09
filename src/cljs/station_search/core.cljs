@@ -1,7 +1,7 @@
 (ns station-search.core
   (:require [reagent.core :as r]
             [ajax.core :as ajax]
-            [domina :refer [by-id value set-value! add-class! remove-class!]]
+            [domina.core :refer [by-id value set-value! add-class! remove-class!]]
             [bootstrap.ui :as ui]
             [gaode-map.core :as gaode]))
 
@@ -61,24 +61,25 @@
 
 (defn station-form
   []
-  [ui/form-horizontal "search-form" "#"
-   [[ui/input-element "pcode" "pcode" "text" "省份编码" "省份"]
-    [ui/input-element "instation" "instation" "text" "入站口" "入站"]
-    [ui/input-element "outstation" "outstation" "text" "出站口" "出站"]
-    [ui/button-element "submit" "查询" station-form-submit]]])
+  [ui/form-horizontal
+   {:id "search-form" :action "#" :elements
+    [[ui/input-element {:id "pcode" :name "pcode" :type "text" :placeholder "省份编码" :label "省份"}]
+     [ui/input-element {:id "instation" :name "instation" :type "text" :placeholder "入站口" :label "入站"}]
+     [ui/input-element {:id "outstation" :name "outstation" :type "text" :placeholder "出站口" :label "出站"}]
+     [ui/button-element {:id "btn-submit" :type "submit" :value "查询" :on-click station-form-submit}]]}])
 
 (defn in-out-station
   [e]
   (if-let [{:keys [pcode instation outstation inname outname inattr outattr in_lng in_lat out_lng out_lat distance]} e]
-    [ui/title-panel "查询信息" "panel-info"
-     [:div
-      [:p "省份编码:" pcode]
-      [:p "入口站：" instation]
-      [:p "出口站：" outstation]
-      [:p "入口收费站：" (str inname inattr) "[" in_lng "," in_lat "]"]
-      [:p "出口收费站：" (str outname outattr) "[" out_lng "," out_lat "]"]
-      [:p "距离：" distance "米"]]]
-    [ui/title-panel "路径信息" "panel-danger" [:p ""]]))
+    [ui/title-panel {:title "查询信息" :class "panel-success"
+                     :body [:div
+                            [:p "省份编码:" pcode]
+                            [:p "入口站：" instation]
+                            [:p "出口站：" outstation]
+                            [:p "入口收费站：" (str inname inattr) "[" in_lng "," in_lat "]"]
+                            [:p "出口收费站：" (str outname outattr) "[" out_lng "," out_lat "]"]
+                            [:p "距离：" distance "米"]]}]
+    [ui/title-panel {:title "路径信息" :class "panel-danger" :body [:p ""]}]))
 
 (defn main-frame
   []
@@ -96,23 +97,28 @@
                                                            ]}
                     {:id "station" :tab "高德"}]]]
      [:div.col-lg-9
-      [ui/title-panel "地图展示" "panel-info" [:div#map]]]]
+      [ui/title-panel {:title [ui/button-element {:id "btn-map-clear" :type "button" :value "地图清空"  :class "btn-info btn-xs"}]
+                       :class "panel-success"
+                       :body [:div
+                              [:div#map]]}]]]
     [:div.row
      [:div.col-lg-12
-      [ui/title-panel "可选站点坐标" "panel-info"
-       [ui/table (merge (get-in @state [:available-stations])
-                        {:on-dbclick
-                         (fn [i]
-                           (let [row (-> @state (get-in [:available-stations :rows]) (get i))
-                                 p1 (row 1)
-                                 p2 (row 3)
-                                 t1 (row 0)
-                                 t2 (row 2)]
-                             (do
-                               (gaode/search-driving-path p1 p2)
-                               (gaode/start-marker t1 p1)
-                               (gaode/end-marker t2 p2)
-                               nil)))})]]]]]])
+      [ui/title-panel
+       {:title "可选站点坐标" :class "panel-success"
+        :body [ui/table (merge
+                         (get-in @state [:available-stations])
+                         {:on-dbclick
+                          (fn [i]
+                            (let [row (-> @state (get-in [:available-stations :rows]) (get i))
+                                  p1 (row 1)
+                                  p2 (row 3)
+                                  t1 (row 0)
+                                  t2 (row 2)]
+                              (do
+                                (gaode/search-driving-path p1 p2)
+                                (gaode/start-marker t1 p1)
+                                (gaode/end-marker t2 p2)
+                                nil)))})]}]]]]])
 
 (defn render
   []

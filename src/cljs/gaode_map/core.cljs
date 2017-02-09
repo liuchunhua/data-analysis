@@ -2,8 +2,7 @@
   (:require [goog.dom :as dom]
             [reagent.core :as r]
             [ajax.core :as ajax]
-            [domina :refer [by-id value set-value! add-class! remove-class!]]
-            [domina.events :refer [listen! prevent-default]]
+            [domina.core :refer [by-id value set-value! add-class! remove-class!]]
             [bootstrap.ui :as ui])
   (:require-macros [gaode-map.core :refer [driving-plan]]))
 
@@ -17,8 +16,11 @@
 (defn create-map
   [id]
   (let [div (dom/getElement id)
-        ops #js {:resizeEnable true, :center #js [116.397428, 39.90923], :zoom 10}]
-    (js/AMap.Map. div ops)))
+        ops #js {:resizeEnable true, :center #js [116.397428, 39.90923], :zoom 10}
+        map (js/AMap.Map. div ops)]
+    (do
+      (.addDomListener js/AMap.event (by-id "btn-map-clear") "click" (fn [] (.clearMap map)) false)
+      map)))
 
 
 (defn destroy-map
