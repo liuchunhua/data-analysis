@@ -50,7 +50,14 @@
        ^{:key i} [:th column])]]
    [:tbody
     (for [[i row] (zipmap (range) rows)]
-      ^{:key i} [:tr {:on-double-click (fn [e] (when on-dbclick (do (on-dbclick i) (classes/add (dom/getParentElement (.-target e)) "success") nil))) :on-click (fn [e] (when on-click (on-click e)))}
+      ^{:key i} [:tr {:on-double-click (fn [e] (when on-dbclick (do (on-dbclick i) (classes/add (dom/getParentElement (.-target e)) "success") nil)))
+                      :on-click (fn [e] (when on-click (on-click e)))}
                  (for [[index cell] (zipmap (range) row)]
                    ^{:key index} [:td (cond (array? cell) (join "," cell)
                                             :else cell)])])]])
+(defn gaode-map
+  []
+  [title-panel {:title [button-element {:id "btn-map-clear" :type "button" :value "地图清空"  :class "btn-info btn-xs"}]
+                   :class "panel-success"
+                   :body [:div
+                          [:div#map]]}])

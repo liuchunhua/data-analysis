@@ -20,6 +20,7 @@
         map (js/AMap.Map. div ops)]
     (do
       (.addDomListener js/AMap.event (by-id "btn-map-clear") "click" (fn [] (.clearMap map)) false)
+      (swap! state assoc :map map)
       map)))
 
 
@@ -32,27 +33,23 @@
 (defn search-driving-path
   [p1,p2]
   (do
-    (if-not (@state :map) (swap! state assoc :map (create-map "map")))
     (driving-plan (let [driving (js/AMap.Driving. #js {:map (@state :map) :hideMarkers true})]
                     (do (swap! state assoc :driving driving)(.search driving p1 p2)) nil))))
 (defn create-marker
-  [title icon position map]
+  [title icon position]
   (let [url (or icon "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png")
         marker (js/AMap.Marker. #js {:icon url :position position})]
     (do
       (.setTitle marker title)
-      (.setMap marker map)
+      (.setMap marker (@state :map))
       nil)))
 
 (defn start-marker
   [title position]
   (let [start "http://webapi.amap.com/theme/v1.3/markers/n/start.png"]
-    (create-marker title start position (@state :map))))
+    (create-marker title start position)))
 
 (defn end-marker
   [title position]
   (let [end "http://webapi.amap.com/theme/v1.3/markers/n/end.png"]
-    (create-marker title end position (@state :map))))
-
-
-
+    (create-marker title end position)))

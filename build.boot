@@ -16,6 +16,7 @@
                  [cljs-ajax "0.5.8"]
                  [org.clojars.magomimmo/domina "2.0.0-SNAPSHOT"]
                  [com.sdhs.etc.analysis/analysis-restful-service "0.0.1"]
+                 [bidi "2.0.16"]
                  ]
  :mirrors ["central" {:name "uk" :url "http://uk.maven.org/maven2/"}])
 
