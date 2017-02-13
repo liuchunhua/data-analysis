@@ -58,6 +58,6 @@
 (defn gaode-map
   []
   [title-panel {:title [button-element {:id "btn-map-clear" :type "button" :value "地图清空"  :class "btn-info btn-xs"}]
-                   :class "panel-success"
-                   :body [:div
-                          [:div#map]]}])
+                :class "panel-success"
+                :body [:div
+                       [:div#map]]}])

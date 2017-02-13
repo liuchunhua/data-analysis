@@ -161,38 +161,39 @@
 (def init-gaode-map (with-meta ui/gaode-map
                       {:component-did-mount #(gaode/create-map "map")}))
 (defn station-search-page
-  []
+  [{:keys [route available-stations]}]
   [:div
     [:div.row
      [:div.col-lg-3
       [ui/title-panel {:title "站点查询" :class "panel-success"
                        :body [:div
                               [station-form]
-                              [in-out-station (@state :route)]
+                              (when route [in-out-station route])
                               ]}]]
      [:div.col-lg-9
       [init-gaode-map]]]
     [:div.row
      [:div.col-lg-12
-      [ui/title-panel
-       {:title "可选站点坐标" :class "panel-success"
-        :body [ui/table (merge
-                         (get-in @state [:available-stations])
-                         {:on-dbclick
-                          (fn [i]
-                            (let [row (-> @state (get-in [:available-stations :rows]) (get i))
-                                  p1 (row 1)
-                                  p2 (row 3)
-                                  t1 (row 0)
-                                  t2 (row 2)]
-                              (do
-                                (gaode/search-driving-path p1 p2)
-                                (gaode/start-marker t1 p1)
-                                (gaode/end-marker t2 p2)
-                                nil)))})]}]]]])
+      (when available-stations
+        [ui/title-panel
+         {:title "可选站点坐标" :class "panel-success"
+          :body [ui/table (merge
+                           available-stations
+                           {:on-dbclick
+                            (fn [i]
+                              (let [row (-> (available-stations :row) (get i))
+                                    p1 (row 1)
+                                    p2 (row 3)
+                                    t1 (row 0)
+                                    t2 (row 2)]
+                                (do
+                                  (gaode/search-driving-path p1 p2)
+                                  (gaode/start-marker t1 p1)
+                                  (gaode/end-marker t2 p2)
+                                  nil)))})]}])]]])
 
 (defn gaode-station-page
-  []
+  [params]
   [:div
    [:div.row
     [:div.col-lg-3
@@ -201,10 +202,11 @@
      [init-gaode-map ]]]
    [:div.row
     [:div.col-lg-12
-     [ui/title-panel
-      {:title "收费站数据"
-       :class "panel-success"
-       :body [ui/table (get-in @state [:gaode-stations])]}]]]])
+     (when params
+       [ui/title-panel
+        {:title "收费站数据"
+         :class "panel-success"
+         :body [ui/table params]}])]]])
 
 (defn main-frame
   []
@@ -220,8 +222,8 @@
          [:li [:a {:href "#/analysis/gaode"} "高德"]]
          ]]]]
      (case page
-       :stations [station-search-page]
-       :gaode [gaode-station-page]
+       :stations [station-search-page @state]
+       :gaode [gaode-station-page (get-in @state [:gaode-stations])]
        [:div "Not Found"])
      ]))
 

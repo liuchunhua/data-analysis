@@ -16,7 +16,7 @@
 (defn create-map
   [id]
   (let [div (dom/getElement id)
-        ops #js {:resizeEnable true, :center #js [116.397428, 39.90923], :zoom 10}
+        ops #js {:resizeEnable true, :center #js [116.397428, 39.90923], :zoom 4}
         map (js/AMap.Map. div ops)]
     (do
       (.addDomListener js/AMap.event (by-id "btn-map-clear") "click" (fn [] (.clearMap map)) false)
