@@ -34,8 +34,8 @@
      [:ul {:class "nav nav-tabs" :role "tablist"}
       [:li {:class "active" :role "presentation"} [:a {:href (str "#" id) :role "tab" :data-toggle "tab" :aria-controls id} tab]]
       (for [{:keys [id tab]} tabs]
-        ^{:key id} [:li {:role "presentation"} [:a {:href (str "#" id) :role "tab" :data-toggle "tab" :aria-controls id} tab]])
-      ]
+        ^{:key id} [:li {:role "presentation"} [:a {:href (str "#" id) :role "tab" :data-toggle "tab" :aria-controls id} tab]])]
+
      [:div.tab-content {:style {:padding "4px"}}
       [:div {:id id :role "tabpanel" :class "tab-pane fade in active" :aria-labelledby (str id "-tab")} tab-content]
       (for [{:keys [id tab-content]} tabs]

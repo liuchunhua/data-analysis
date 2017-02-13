@@ -40,9 +40,9 @@
            (reset! navigation-state nav)
            (do
              (.warn js/console (str "No route matches token " path ", redirecting to /stations"))
-             (navigate-to! routes {:page :stations}))
-           ))
-       ))
+             (navigate-to! routes {:page :stations}))))))
+
+
     (.setEnabled true)))
 
 (defn search-stations
@@ -153,10 +153,10 @@
   []
   (ui/form-horizontal
     {:id "gaode-search-form" :action "#" :elements
-    [[ui/input-element {:id "gaode-pcode" :name "pcode" :type "text" :placeholder "省份编码" :label "省份"}]
-     [ui/input-element {:id "gaode-station" :name "station" :type "text" :placeholder "收费站" :label "收费站"}]
-     [ui/input-element {:id "gaode-attr" :name "attr" :type "text" :placeholder "属性" :label "属性"}]
-     [ui/button-element {:type "submit" :value "查询" :on-click gaode-station-submit}]]}))
+     [[ui/input-element {:id "gaode-pcode" :name "pcode" :type "text" :placeholder "省份编码" :label "省份"}]
+      [ui/input-element {:id "gaode-station" :name "station" :type "text" :placeholder "收费站" :label "收费站"}]
+      [ui/input-element {:id "gaode-attr" :name "attr" :type "text" :placeholder "属性" :label "属性"}]
+      [ui/button-element {:type "submit" :value "查询" :on-click gaode-station-submit}]]}))
 
 (def init-gaode-map (with-meta ui/gaode-map
                       {:component-did-mount #(gaode/create-map "map")}))
@@ -168,8 +168,8 @@
       [ui/title-panel {:title "站点查询" :class "panel-success"
                        :body [:div
                               [station-form]
-                              (when route [in-out-station route])
-                              ]}]]
+                              (when route [in-out-station route])]}]]
+
      [:div.col-lg-9
       [init-gaode-map]]]
     [:div.row
@@ -199,7 +199,7 @@
     [:div.col-lg-3
      [ui/title-panel {:title "高德收费站查询" :class "panel-success" :body [gaode-station-form]}]]
     [:div.col-lg-9
-     [init-gaode-map ]]]
+     [init-gaode-map]]]
    [:div.row
     [:div.col-lg-12
      (when params
@@ -219,13 +219,13 @@
        [:div {:class "collapse navbar-collapse"}
         [:ul {:class "nav navbar-nav"}
          [:li [:a {:href "#/analysis/stations"} "路径"]]
-         [:li [:a {:href "#/analysis/gaode"} "高德"]]
-         ]]]]
+         [:li [:a {:href "#/analysis/gaode"} "高德"]]]]]]
+
      (case page
        :stations [station-search-page @state]
        :gaode [gaode-station-page (get-in @state [:gaode-stations])]
-       [:div "Not Found"])
-     ]))
+       [:div "Not Found"])]))
+
 
 
 (def routes
