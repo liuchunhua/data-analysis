@@ -2,7 +2,8 @@
    (:require [ajax.core :as ajax]
              [domina.core :refer [by-id value set-value! add-class! remove-class!]]
              [bootstrap.ui :as ui]
-             [gaode-map.core :as gaode]))
+             [gaode-map.core :as gaode]
+             [reagent.core :as r]))
 
 (defn search-gaode-stations
   [pcode station attr gs-atom]
@@ -16,7 +17,8 @@
                                coll (response :result)]
                            (reset! gs-atom
                                    {:columns ["ID" "省份编码" "属性" "坐标"]
-                                    :rows (for [{:keys [id pcode station attr lng lat]} coll] [id pcode station attr (array lng lat)])})
+                                    :rows (for [{:keys [id pcode station attr lng lat]} coll] [id pcode station attr (array lng lat)])
+                                    :rows-cls {}})
                            (doseq [{:keys [station attr lng lat]} coll]
                              (gaode/create-marker (str station attr) nil (array lng lat)))))
               :error-handler (fn [{:keys [status status-text]}] (reset! gs-atom nil))}))
@@ -50,6 +52,7 @@
 
 (def init-gaode-map (with-meta ui/gaode-map
                                {:component-did-mount #(gaode/create-map "map")}))
+
 
 (defn gaode-station-page
   [gs-atom]

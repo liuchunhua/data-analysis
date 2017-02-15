@@ -35,7 +35,8 @@
                            (swap! ss-atom assoc
                                   :available-stations
                                   {:columns ["入口"  "入口坐标" "出口" "出口坐标"]
-                                   :rows (mapv #(vector (station % :in) (poi % :in) (station % :out) (poi % :out)) road)})))
+                                   :rows (mapv #(vector (station % :in) (poi % :in) (station % :out) (poi % :out)) road)
+                                   :rows-cls {}})))
               :error-handler (fn [{:keys [status status-text]}] (swap! ss-atom assoc :available-stations nil))}))
 
 (defn station-form-submit
@@ -110,4 +111,5 @@
                                    (gaode/search-driving-path p1 p2)
                                    (gaode/start-marker t1 p1)
                                    (gaode/end-marker t2 p2)
+                                   (swap! ss-atom assoc-in [:available-stations :rows-cls i] "success")
                                    nil)))})]}])]]]))

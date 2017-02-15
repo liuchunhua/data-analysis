@@ -5,9 +5,8 @@
 
 (defn input-element
   [{:keys [id name type placeholder label]}]
-  [:div.form-group {:id (str "input-" id)}
-   [:label {:for id :class "col-sm-2 control-label"} label]
-   [:div.col-sm-10 [:input.form-control {:id id :name name :type type :placeholder placeholder :required ""}]]])
+  [:input.form-control {:id id :name name :type type :placeholder placeholder :required ""}])
+
 
 (defn button-element
   [{:keys [id type value on-click class]}]
@@ -15,13 +14,16 @@
 
 (defn form-horizontal
   [{:keys [id action elements]}]
-  [:form.form-horizontal {:id id :action action :style {:padding "4px"}}
+  [:form.form-horizontal {:id id :action (or action "#") :style {:padding "4px"}}
    (for [[element i] (zipmap elements (range))]
-     ^{:key i} [:div element])])
+    (let [{:keys [id label placeholder]} (last element)]
+     ^{:key i} [:div.form-group {:id (str "input-" id)}
+                [:label {:for id :class "col-sm-3 control-label"} (or label placeholder)]
+                [:div.col-sm-9 element]]))])
 
 (defn title-panel
   [{:keys [title class body]}]
-  [:div.panel {:class class}
+  [:div.panel {:class (or class "panel-success")}
    [:div.panel-heading title]
    [:div.panel-body
     body]])
@@ -42,7 +44,7 @@
         ^{:key id}[:div#station {:role "tabpanel" :class "tab-pane fade" :aria-labelledby (str id "-tab")}
                    tab-content])]]))
 (defn table
-  [{:keys [columns rows on-click on-dbclick]}]
+  [{:keys [columns rows on-click on-dbclick rows-cls]}]
   [:table {:class "table table-hover"}
    [:thead
     [:tr
@@ -50,8 +52,9 @@
        ^{:key i} [:th column])]]
    [:tbody
     (for [[i row] (zipmap (range) rows)]
-      ^{:key i} [:tr {:on-double-click (fn [e] (when on-dbclick (do (on-dbclick i) (classes/add (dom/getParentElement (.-target e)) "success") nil)))
-                      :on-click (fn [e] (when on-click (on-click e)))}
+      ^{:key i} [:tr {:on-double-click (fn [e] (when on-dbclick (do (on-dbclick i) nil)))
+                      :on-click (fn [e] (when on-click (on-click e)))
+                      :class (rows-cls i)}
                  (for [[index cell] (zipmap (range) row)]
                    ^{:key index} [:td (cond (array? cell) (join "," cell)
                                             :else cell)])])]])
@@ -61,3 +64,12 @@
                 :class "panel-success"
                 :body [:div
                        [:div#map]]}])
+
+(defn form-inline
+  [{:keys [id action elements]}]
+  [:form.form-inline {:id id :action (or action "#")}
+   (for [[element i] (zipmap elements (range))]
+     (let [{:keys [id label placeholder]} (last element)]
+       ^{:key i} [:div.form-group {:id (str "input-" id)}
+                  [:label.sr-only {:for id} (or label placeholder)]
+                  element]))])

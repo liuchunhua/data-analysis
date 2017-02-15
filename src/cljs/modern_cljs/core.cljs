@@ -6,7 +6,8 @@
             [gaode-search.core :as gs]
             [bidi.bidi :as b]
             [goog.events :as events]
-            [goog.history.EventType :as EventType]))
+            [goog.history.EventType :as EventType]
+            [car-path.core :as car-path]))
 
 ;; enable cljs to print to the JS console of the browser
 (enable-console-print!)
@@ -20,6 +21,7 @@
 (def navigation-state (r/cursor state [:navigation]))
 (def available-stations-atom (r/cursor state [:available-stations]))
 (def gaode-stations-atom (r/cursor state [:gaode-stations]))
+(def car-path-atom (r/cursor state [:car-path]))
 
 (defn url-to-nav [routes path]
   (let [{:keys [handler route-params]} (b/match-route routes path)]
@@ -59,19 +61,21 @@
        [:div {:class "collapse navbar-collapse"}
         [:ul {:class "nav navbar-nav"}
          [:li [:a {:href "#/analysis/stations"} "路径"]]
-         [:li [:a {:href "#/analysis/gaode"} "高德"]]]]]]
+         [:li [:a {:href "#/analysis/gaode"} "高德"]]
+         [:li [:a {:href "#/analysis/carpath"} "轨迹"]]]]]]
      (case page
            :stations [station/station-search-page available-stations-atom]
            :gaode [gs/gaode-station-page gaode-stations-atom]
+           :car-path [car-path/car-path-page car-path-atom]
            [:div "Not Found"])]))
 
 (def routes
   ["/analysis" {"/stations" :stations
-                "/gaode" :gaode}])
+                "/gaode" :gaode
+                "/carpath" :car-path}])
 (defn render
   []
   (hook-browser-navigation! routes)
   (r/render-component [main-frame] (.getElementById js/document "app")))
 
 (render)
-;;(gaode/search-driving-path #js [116.379028, 39.865042] #js [116.427281, 39.903719])
